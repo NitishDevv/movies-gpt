@@ -1,11 +1,7 @@
-import "./App.css";
+import Body from "./components/Body";
 
 function App() {
-  return (
-    <div className="bg-amber-400">
-      <h1 className="text-amber-700">Namaste World</h1>
-    </div>
-  );
+  return <Body />;
 }
 
 export default App;
