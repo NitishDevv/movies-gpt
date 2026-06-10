@@ -7,14 +7,12 @@ import { auth } from "../utils/firebase";
 
 import Header from "./Header";
 import { checkValidData } from "../utils/validateLogin";
-import { useNavigate } from "react-router-dom";
 import { updateProfile } from "firebase/auth";
+import { BG_URL } from "../utils/constants";
 
 const LoginPage = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-
-  const navigate = useNavigate();
 
   const name = useRef(null);
   const email = useRef(null);
@@ -41,14 +39,9 @@ const LoginPage = () => {
           updateProfile(user, {
             displayName: name.current.value,
             photoURL: "https://example.com/jane-q-user/profile.jpg",
-          })
-            .then(() => {
-              // Profile updated!
-              navigate("/browse");
-            })
-            .catch((error) => {
-              setErrorMessage(error.message);
-            });
+          }).catch((error) => {
+            setErrorMessage(error.message);
+          });
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -66,8 +59,6 @@ const LoginPage = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
           // ...
         })
         .catch((error) => {
@@ -86,10 +77,7 @@ const LoginPage = () => {
     <div className="">
       <Header />
       <div className="absolute">
-        <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/435e8bb8-7f1b-49cb-8da8-bff997124294/web/IN-en-20260511-TRIFECTA-perspective_ec39852e-0b48-4e8a-b415-dd8376cd83ce_large.jpg"
-          alt="bg-image"
-        />
+        <img src={BG_URL} alt="bg-image" />
       </div>
       <form
         onSubmit={(e) => e.preventDefault()}
