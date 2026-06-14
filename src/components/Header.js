@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
-import { toggleGptSearchView } from "../utils/gptSlice";
+import { setGptSearchView, toggleGptSearchView } from "../utils/gptSlice";
 import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
@@ -53,7 +53,12 @@ const Header = () => {
   }, [dispatch, location.pathname, navigate]);
 
   const handleGptSearchClick = () => {
-    // Toggle GPT search
+    if (location.pathname !== "/browse") {
+      dispatch(setGptSearchView(!showGptSearch));
+      navigate("/browse");
+      return;
+    }
+
     dispatch(toggleGptSearchView());
   };
 
