@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
@@ -10,6 +10,7 @@ import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const user = useSelector((store) => store.user);
@@ -37,7 +38,9 @@ const Header = () => {
             photoURL: photoURL,
           }),
         );
-        navigate("/browse");
+        if (location.pathname === "/") {
+          navigate("/browse");
+        }
       } else {
         // User is signed out
         dispatch(removeUser());
@@ -47,7 +50,7 @@ const Header = () => {
 
     // Unsubscribe when component unmounts
     return () => unsubscribe();
-  }, []);
+  }, [dispatch, location.pathname, navigate]);
 
   const handleGptSearchClick = () => {
     // Toggle GPT search
@@ -59,13 +62,13 @@ const Header = () => {
   };
 
   return (
-    <div className="flex absolute w-screen h-[15%] px-8 py-2 bg-gradient-to-b from-black z-10 justify-between">
-      <img className="w-52" src={LOGO} alt="logo" />
+    <div className="absolute inset-x-0 top-0 z-30 flex flex-col items-center justify-between gap-2 bg-gradient-to-b from-black px-4 py-3 sm:px-6 md:flex-row md:items-start md:px-8">
+      <img className="w-32 sm:w-44 md:w-52" src={LOGO} alt="logo" />
       {user && (
-        <div className="flex p-2 items-center">
+        <div className="flex w-full flex-wrap items-center justify-center gap-2 text-sm sm:w-auto sm:flex-nowrap md:justify-end md:text-base">
           {showGptSearch && (
             <select
-              className="p-2 m-2 bg-gray-900 text-white"
+              className="max-w-[9rem] rounded bg-gray-900 p-2 text-white sm:max-w-none"
               onChange={handleLanguageChange}
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
@@ -77,12 +80,19 @@ const Header = () => {
           )}
           <button
             onClick={handleGptSearchClick}
-            className="py-2 px-4 my-2 mx-4 rounded-lg bg-purple-800 text-white"
+            className="rounded-lg bg-purple-800 px-3 py-2 text-white sm:px-4"
           >
             {showGptSearch ? "Home Page" : "GPT Search"}
           </button>
-          <img className="h-12 w-12" src={USER_AVATAR} alt="user icon" />
-          <button onClick={handleSignOut} className="font-bold text-white">
+          <img
+            className="hidden h-10 w-10 shrink-0 sm:block md:h-12 md:w-12"
+            src={USER_AVATAR}
+            alt="user icon"
+          />
+          <button
+            onClick={handleSignOut}
+            className="whitespace-nowrap font-bold text-white"
+          >
             (Sign Out)
           </button>
         </div>

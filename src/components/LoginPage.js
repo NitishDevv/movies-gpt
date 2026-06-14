@@ -74,16 +74,20 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="">
+    <div className="min-h-screen bg-black">
       <Header />
-      <div className="absolute">
-        <img src={BG_URL} alt="bg-image" />
+      <div className="fixed inset-0">
+        <img
+          className="h-full w-full object-cover"
+          src={BG_URL}
+          alt="bg-image"
+        />
       </div>
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="w-1/4 absolute bg-black p-12 my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-75"
+        className="absolute left-1/2 top-28 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-lg bg-black bg-opacity-75 p-6 text-white sm:top-32 sm:p-8 md:top-36 lg:w-1/3 lg:max-w-lg lg:p-12"
       >
-        <h1 className="font-bold text-3xl py-4">
+        <h1 className="py-3 text-2xl font-bold sm:text-3xl">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
         {!isSignInForm && (
@@ -91,29 +95,34 @@ const LoginPage = () => {
             ref={name}
             type="text"
             placeholder="Full Name"
-            className="p-4 my-4 w-full bg-gray-700"
+            className="my-3 w-full bg-gray-700 p-3 sm:my-4 sm:p-4"
           />
         )}
         <input
           ref={email}
           type="text"
           placeholder="Email Address"
-          className="p-4 my-4 w-full bg-gray-700"
+          className="my-3 w-full bg-gray-700 p-3 sm:my-4 sm:p-4"
         />
         <input
           ref={password}
           type="password"
           placeholder="Password"
-          className="p-4 my-4 w-full bg-gray-700"
+          className="my-3 w-full bg-gray-700 p-3 sm:my-4 sm:p-4"
         />
-        <p className="text-red-500 font-bold text-lg py-1">{errorMessage}</p>
+        <p className="py-1 text-sm font-bold text-red-500 sm:text-lg">
+          {errorMessage}
+        </p>
         <button
-          className="p-4 my-6 w-full bg-red-700 rounded-lg"
+          className="my-5 w-full rounded-lg bg-red-700 p-3 sm:my-6 sm:p-4"
           onClick={handleButtonClick}
         >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
-        <p className="my-4 cursor-pointer" onClick={toggleSignInForm}>
+        <p
+          className="my-3 cursor-pointer text-sm sm:my-4 sm:text-base"
+          onClick={toggleSignInForm}
+        >
           {isSignInForm
             ? "New to Netflix? Sign Up Now"
             : "Already registered? Sign In Now"}
