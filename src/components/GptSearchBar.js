@@ -3,10 +3,11 @@ import lang from "../utils/languageConstants";
 import { useDispatch, useSelector } from "react-redux";
 import openai from "../utils/openAi";
 import { API_OPTIONS } from "../utils/constants";
-import { addGptMovieResult } from "../utils/gptSlice";
+import { addGptMovieResult, setGptLoading } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.language);
+  const isLoading = useSelector((store) => store.gpt.isLoading);
   const searchText = useRef(null);
   const dispatch = useDispatch();
 
@@ -81,34 +82,44 @@ const GptSearchBar = () => {
   };
   const handleGptSearchClick = async () => {
     const userQuery = searchText.current.value;
+    if (!userQuery.trim() || isLoading) return;
+
     const genreIds = getGenreIdsFromQuery(userQuery);
+    dispatch(setGptLoading(true));
 
-    // Make an API call to GPT API and get the movie Results
+    try {
+      // Make an API call to GPT API and get the movie Results
 
-    const gptResults = await openai.responses.create({
-      model: "gpt-5.4-mini",
-      instructions:
-        "Act as a Movie Recommendation system and suggest some movies for the query only give me name of 5 movies comma seperated like the result example ahead Result Example: Movie1, Movie2, Movie3, Movie4, Movie5.",
-      input: userQuery,
-    });
-    // converting The Conjuring, Hereditary, A Nightmare on Elm Street, It, The Babadook to []
-    const moviesArray = gptResults.output_text
-      .split(",")
-      .map((movie) => movie.trim())
-      .filter(Boolean);
+      const gptResults = await openai.responses.create({
+        model: "gpt-5.4-mini",
+        instructions:
+          "Act as a Movie Recommendation system and suggest some movies for the query only give me name of 5 movies comma seperated like the result example ahead Result Example: Movie1, Movie2, Movie3, Movie4, Movie5.",
+        input: userQuery,
+      });
+      // converting The Conjuring, Hereditary, A Nightmare on Elm Street, It, The Babadook to []
+      const moviesArray = gptResults.output_text
+        .split(",")
+        .map((movie) => movie.trim())
+        .filter(Boolean);
 
-    // For each movie search TMDB API
+      // For each movie search TMDB API
 
-    const promiseArray = moviesArray.map((movie) =>
-      searchMovieInTMDB(movie, genreIds),
-    );
-    // [Promise, Promise, Promise, Promise, Promise]
+      const promiseArray = moviesArray.map((movie) =>
+        searchMovieInTMDB(movie, genreIds),
+      );
+      // [Promise, Promise, Promise, Promise, Promise]
 
-    const tmdbResults = await Promise.all(promiseArray);
+      const tmdbResults = await Promise.all(promiseArray);
 
-    dispatch(
-      addGptMovieResult({ movieNames: moviesArray, movieResults: tmdbResults }),
-    );
+      dispatch(
+        addGptMovieResult({
+          movieNames: moviesArray,
+          movieResults: tmdbResults,
+        }),
+      );
+    } catch (error) {
+      dispatch(setGptLoading(false));
+    }
   };
 
   return (
@@ -124,10 +135,11 @@ const GptSearchBar = () => {
           className="rounded-lg p-3 text-sm sm:col-span-9 sm:m-2 sm:p-4 sm:text-base"
         />
         <button
-          className="rounded-lg bg-red-700 px-4 py-3 text-white sm:col-span-3 sm:m-2"
+          className="rounded-lg bg-red-700 px-4 py-3 text-white disabled:cursor-not-allowed disabled:bg-red-900 sm:col-span-3 sm:m-2"
+          disabled={isLoading}
           onClick={handleGptSearchClick}
         >
-          {lang[langKey].search}
+          {isLoading ? "Loading..." : lang[langKey].search}
         </button>
       </form>
     </div>
