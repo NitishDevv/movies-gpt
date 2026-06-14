@@ -18,7 +18,6 @@ const gptSlice = createSlice({
 
     addGptMovieResult: (state, action) => {
       const { movieNames, movieResults } = action.payload;
-      console.log(movieNames, movieResults);
       state.movieNames = movieNames;
       state.movieResults = movieResults;
     },

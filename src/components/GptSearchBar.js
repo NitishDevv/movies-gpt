@@ -82,7 +82,6 @@ const GptSearchBar = () => {
   const handleGptSearchClick = async () => {
     const userQuery = searchText.current.value;
     const genreIds = getGenreIdsFromQuery(userQuery);
-    console.log(userQuery);
 
     // Make an API call to GPT API and get the movie Results
 
@@ -92,13 +91,11 @@ const GptSearchBar = () => {
         "Act as a Movie Recommendation system and suggest some movies for the query only give me name of 5 movies comma seperated like the result example ahead Result Example: Movie1, Movie2, Movie3, Movie4, Movie5.",
       input: userQuery,
     });
-    console.log(gptResults.output_text);
     // converting The Conjuring, Hereditary, A Nightmare on Elm Street, It, The Babadook to []
     const moviesArray = gptResults.output_text
       .split(",")
       .map((movie) => movie.trim())
       .filter(Boolean);
-    console.log(moviesArray);
 
     // For each movie search TMDB API
 
@@ -108,7 +105,6 @@ const GptSearchBar = () => {
     // [Promise, Promise, Promise, Promise, Promise]
 
     const tmdbResults = await Promise.all(promiseArray);
-    console.log(tmdbResults);
 
     dispatch(
       addGptMovieResult({ movieNames: moviesArray, movieResults: tmdbResults }),
