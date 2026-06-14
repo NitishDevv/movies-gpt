@@ -38,6 +38,9 @@
 - GPT search page
 - GPT search bar
 - Multi-Language feature in GPT Page
+- GPT search works to show 5 movies related to search
+- Movie card opens details about movie
+- Responsive web-app
 
 # Features
 
