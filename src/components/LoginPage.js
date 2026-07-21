@@ -124,7 +124,7 @@ const LoginPage = () => {
           onClick={toggleSignInForm}
         >
           {isSignInForm
-            ? "New to Netflix? Sign Up Now"
+            ? "New to Movies Mart? Sign Up Now"
             : "Already registered? Sign In Now"}
         </p>
       </form>
